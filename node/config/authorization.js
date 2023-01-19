@@ -1,0 +1,1 @@
+export const session_storage_type = 'pg';

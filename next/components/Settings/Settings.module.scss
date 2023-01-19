@@ -1,0 +1,66 @@
+
+.container {
+    position: sticky;
+    bottom: 0px;
+    height: 15vh;
+    padding: 10px;
+    font-family: 'Inconsolata';
+
+    fieldset {
+        width: fit-content;
+        border: 1px solid #c1cad2;
+        border-radius: 10px;
+    }
+
+    ul {
+        width: 400px;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.day{
+    @extend .container;
+    background-color: #FAFAFA;
+    fieldset{
+        background-color: #9098A9
+    }
+}
+
+.sepia_contrast{
+    @extend .container;
+    background-color: #FAFAFA;
+    fieldset{
+        background-color: #B7C4CF;
+    }
+}
+
+
+
+.description {
+    padding: 5px 10px;
+    display: block;
+}
+
+.select {
+    position: relative;
+    border: 1px solid #E8EAED;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 1px 3px -2px #9098A9;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    transition: all 150ms ease;
+    margin: 4px 4px;
+
+    select {
+        padding: 4px 8px;
+        width: 100%;
+        padding-right: 40px;
+    }
+
+    svg {
+        pointer-events: none;
+    }
+}

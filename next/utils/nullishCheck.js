@@ -1,0 +1,1 @@
+export const definedCheck = data => typeof data !== "undefined";

@@ -1,0 +1,37 @@
+{
+  "name": "book_library",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "metautil": "^3.6.0",
+    "next": "^13.1.2-canary.4",
+    "next-pwa": "^5.6.0",
+    "node": "^19.3.0",
+    "pg": "^8.8.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "xml2js": "^0.4.23",
+    "zustand": "^4.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "18.7.18",
+    "@types/react": "18.0.20",
+    "@types/react-dom": "18.0.6",
+    "eslint": "8.23.1",
+    "eslint-config-next": "12.3.0",
+    "sass": "^1.54.9",
+    "typescript": "4.8.3"
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
+}
