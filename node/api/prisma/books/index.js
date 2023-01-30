@@ -20,7 +20,6 @@ const corsHeaders = {
 
 export default ({
   async parseBook(client, file) {
-
     const fileType = client.req.headers['content-type']
     if(fileType === 'application/json') file = file.toString()
     let unzippedBook = await BookReader.unzip(fileType,file)

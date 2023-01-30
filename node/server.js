@@ -1,4 +1,5 @@
 import http2 from 'http2'
+import http from 'http';
 import fs from 'fs';
 
 import { routing } from "./routing.js";
@@ -16,68 +17,80 @@ const types = {
 };
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'http://localhost:3000', 
+  'Access-Control-Allow-Origin': 'http://localhost:3000',
   'Access-Control-Allow-Methods': 'OPTIONS, POST, GET',
   'Access-Control-Max-Age': 2592000, // 30 days,
-  'Access-Control-Allow-Credentials':true,
-  'Access-Control-Allow-Headers': 'Content-Type'
- 
+  'Access-Control-Allow-Credentials': true,
+  'Access-Control-Allow-Headers': ['Content-Type', 'Set-Cookie']
+
 };
 
 
-http2.createSecureServer({
+const server = http2.createSecureServer({
   key: fs.readFileSync('localhost-privkey.pem'),
   cert: fs.readFileSync('localhost-cert.pem'),
 }, async (req, res) => {
 
-  const client = await Client.getInstance(req, res);
-  let body = await receiveBody(req); 
   const { method, url, headers } = req;
-  
-  if(url !== '/parser') body = jsonParse(body);
 
+  const handler = routing[url];
+
+  //if(url !== '/parser') body = jsonParse(body);
   console.log(`${method} ${url} ${headers.cookie}`);
 
+  const client = await Client.getInstance(req, res);
+  const stream = req.stream;
+  const buffers = [];
 
-  res.on('finish', () => {
-    if (client.session) {
-      if(url.split('/').pop() === 'register'){
-        client.session.save();
-      }
-      
+  stream.on('data', (chunk) => {
+    buffers.push(chunk);
+  })
+
+  stream.on('end', async () => {
+    const body = Buffer.concat(buffers)
+
+    if (!handler) {
+      res.statusCode = 404;
+      res.end('Not found 404');
+      return;
     }
-  });
-  
-  const handler = routing[url];
-  if (!handler) {
-    res.statusCode = 404;
-    res.end('Not found 404');
-    return;
-  }
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, corsHeaders);
-    res.end();
-    return;
-}
+    if (req.method === 'OPTIONS') {
+      res.writeHead(204, corsHeaders);
+      res.end();
+      return;
+    }
+
+    if (['GET', 'POST'].indexOf(req.method) > -1) {
+      handler(client, body).then((data) => {
+        const type = typeof data;
+        const serializer = types[type];
+        const result = serializer(data);
+        client.sendCookie();
+        res.writeHead(200, corsHeaders);
+        res.end(result);
+      }, (err) => {
+        res.writeHead(500, corsHeaders);
+        res.end(err.message);
+        console.log(err);
+      });
+      return;
+    }
+
+    res.writeHead(405, corsHeaders);
+    res.end(`${req.method} is not allowed for the request.`);
+
+  })
+});
 
 
-if (['GET', 'POST'].indexOf(req.method) > -1) {
-  handler(client,body).then((data) => {
-    const type = typeof data;
-    const serializer = types[type];
-    const result = serializer(data);
-    client.sendCookie();
-    res.writeHead(200, corsHeaders);
-    res.end(result);
-  }, (err) => {
-    res.writeHead(500, corsHeaders);
-    res.end(err.message);
-    console.log(err);
-  });
-  return;
-}
 
-  res.writeHead(405, corsHeaders);
-  res.end(`${req.method} is not allowed for the request.`);
-}).listen(8000)
+server.listen(8000)
+
+
+
+/*stream.respond({
+      ':status': 200, 
+      'set-cookie':preparedCookie,
+      [http2.sensitiveHeaders]: ['cookie'],
+      ...corsHeaders }); */

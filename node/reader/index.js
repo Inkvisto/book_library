@@ -12,7 +12,7 @@ export const BookReader = ({
     map: new Map(),
 
 /*
-Reader.uzip([file(Buffer) or filename(String)-path to epub file]) => undefined
+Reader.unzip([file(Buffer) or filename(String)-path to epub file]) => undefined
 
 unzip file with zip unpacker("adm-zip") 
 check mime type and run [mimetype]Reader
@@ -35,6 +35,7 @@ check mime type and run [mimetype]Reader
 
 
         } else {
+            console.log(899);
             let html = []
 
             fb2Reader.open(file).then(() => {

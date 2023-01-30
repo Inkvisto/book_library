@@ -1,0 +1,39 @@
+diff --git a/node_modules/metautil/lib/network.js b/node_modules/metautil/lib/network.js
+index 9bb1fd3..5a3bf38 100644
+--- a/node_modules/metautil/lib/network.js
++++ b/node_modules/metautil/lib/network.js
+@@ -54,4 +54,14 @@ const receiveBody = async (req) => {
+   return Buffer.concat(buffers);
+ };
+ 
+-module.exports = { fetch, receiveBody };
++const receiveBodyStream = async (stream) => {
++  const buffers = [];
++
++  stream.on('data', (chunk) => {
++    buffers.push(chunk);
++  })
++
++  return Buffer.concat(buffers);
++}
++
++module.exports = { fetch, receiveBody, receiveBodyStream };
+diff --git a/node_modules/metautil/metautil.d.ts b/node_modules/metautil/metautil.d.ts
+index 1178783..879643f 100644
+--- a/node_modules/metautil/metautil.d.ts
++++ b/node_modules/metautil/metautil.d.ts
+@@ -1,5 +1,6 @@
+ import { EventEmitter } from 'events';
+ import { IncomingMessage } from 'http';
++import { Http2Stream } from 'http2';
+ 
+ export function cryptoRandom(): number;
+ export function generateKey(length: number, possible: string): string;
+@@ -125,6 +126,7 @@ export type FetchOptions = {
+ export function fetch(url: string, options?: FetchOptions): Promise<object>;
+ export function jsonParse(buffer: Buffer): object | null;
+ export function receiveBody(req: IncomingMessage): Promise<Buffer | null>;
++export function receiveBodyStream(stream:Http2Stream): Promise<Buffer | null>;
+ export function flatObject(
+   sourceObject: object,
+   fieldNames: Array<string>,

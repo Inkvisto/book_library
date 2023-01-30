@@ -5,7 +5,9 @@ const UNIX_EPOCH = 'Thu, 01 Jan 1970 00:00:00 GMT';
 const COOKIE_EXPIRE = 'Fri, 01 Jan 2100 00:00:00 GMT';
 const COOKIE_DELETE = `=deleted; Expires=${UNIX_EPOCH}; Path=/; Domain=`;
 
-const parseHost = (host) => {
+const parseHost = (req) => {
+  let host = req.headers.host
+  if (req.httpVersion === '2.0') host = req.headers[':authority']
   if (!host) return 'no-host-name-in-http-headers';
   const portOffset = host.indexOf(':');
   if (portOffset > -1) host = host.substr(0, portOffset);
@@ -16,7 +18,7 @@ class Client {
   constructor(req, res) {
     this.req = req;
     this.res = res;
-    this.host = parseHost(req.headers.host);
+    this.host = parseHost(req);
     this.token = undefined;
     this.session = null;
     this.cookie = {};
@@ -59,7 +61,7 @@ class Client {
     const { res, preparedCookie } = this;
     if (preparedCookie.length && !res.headersSent) {
       console.dir({ preparedCookie });
-      res.setHeader('Set-Cookie', preparedCookie);
+      res.setHeader('Set-cookie', preparedCookie);
     }
   }
 }

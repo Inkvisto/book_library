@@ -19,6 +19,7 @@ export default ({
 
             await Session.start(client)
             client.session.set('email', email)
+            client.session.save();
             return { username }
         } catch (e) {
             throw new Error(e);
@@ -34,13 +35,13 @@ export default ({
         const valid = await validatePassword(password, hash);
         if (!valid) throw new Error('Incorrect login or password');
         await Session.start(client)
+        client.session.set('email', email)
+        client.session.save();
         return { username: user.name }
     },
 
     async unsign(client) {
-        console.log(client);
-       // client.session.delete();
-       // client.deleteCookie('')
+        client.session.delete(client);
     },
 
     async getUsername(client) {
@@ -48,6 +49,8 @@ export default ({
             const email = Object.fromEntries(client.session).email;
             const result = await pool.query('SELECT name FROM tbl_user WHERE email = $1', [email]);
             return result.rows[0];
+        } else {
+             throw new Error('No token for user');
         }
     }
 })
