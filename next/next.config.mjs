@@ -3,6 +3,9 @@
 
 
 const nextConfig = {
+  experimental: {
+    appDir: true
+  },
   reactStrictMode: true,
   swcMinify: true,
   compress: false,
@@ -14,6 +17,23 @@ const nextConfig = {
         permanent: true,
       }
     ]
+  }, 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.gutenberg.org',
+        port: '',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'covers.openlibrary.org',
+        port: '',
+        pathname: '**',
+      },
+      
+    ],
   },
 };
 

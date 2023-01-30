@@ -1,0 +1,29 @@
+.container {
+    padding: 80px;
+    display: grid;
+    row-gap: 100px;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: repeat(4,1fr);
+
+    li {
+        cursor: pointer;
+        width: 300px;
+        height: 400px;
+
+        border: 1px solid #88BBAF;
+        list-style-type: none;
+    }
+}
+
+.cover {
+    width: 300px;
+    height: 400px;
+}
+
+.title{
+    margin-top: 5px;
+    background-color: #88BBAF;
+    border-radius: 5px;
+    display: flex;
+    padding: 5px;
+}

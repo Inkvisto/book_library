@@ -11,7 +11,7 @@ interface SettingsState {
     open:false,
     toggleOpen: () => set((state) => ({ open: !state.open})),
     scroll_mode:'chapters',
-    color_mode:'sepia_contrast'
+    color_mode:'day'
   }),{
     name:'settings-storage'
   }))
