@@ -16,7 +16,7 @@ export default async function handler(
 ) {
 
   try {
-    const buf = await buffer(req);
+    const buf:any = await buffer(req);
 
 
     const parsedBook = await post_request_with_cookie(req.url, buf, req.headers.cookie, { 'Content-Type': 'application/epub+zip' });
@@ -25,8 +25,6 @@ export default async function handler(
 
   } catch (e) {
 
-
-    console.error(e);
     res.status(500).json({ data: null, error: "Internal Server Error" });
 
 

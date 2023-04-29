@@ -11,13 +11,14 @@ export default async function handler(
     try {
 
         const username = await get_request(req.url, req.headers.cookie);
+       
         return res.status(200).send(username);
 
     } catch (error) {
 
-        console.error(error);
         res.status(500).send({ message: 'Server error!' });
-
+        
     }
+
 }
 

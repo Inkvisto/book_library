@@ -3,54 +3,55 @@
 import { pool } from '../postgres/pg_client.js';
 import v8 from 'v8';
 
-const get_db_session = (token, ...args) => {
+const get_db_session = async(token, ...args) => {
   const callback = args[args.length - 1];
   if (typeof token !== 'string') {
     callback(new Error('Invalid session token'));
     return;
   }
-  pool.query(`
-    SELECT * FROM tbl_sessions WHERE token = $1;
-    `, [token])
+  callback(null, await pool.query(`
+  SELECT * FROM tbl_sessions WHERE token = $1;
+  `, [token]))
 };
 
-const save_db_session = (token, ...args) => {
+const save_db_session = (token, data, ...args) => {
   const callback = args[args.length - 1];
   if (typeof token !== 'string') {
     callback(new Error('Invalid session token'));
     return;
   }
   pool.query(`
-    INSERT INTO tbl_sessions VALUES(DEFAULT,$1);
-    `, [token])
+    INSERT INTO tbl_sessions VALUES($1,$2);
+    `, [data,token])
 };
 
-const delete_db_session = (token, ...args) => {
+const delete_db_session = async(token, ...args) => {
   const callback = args[args.length - 1];
   if (typeof token !== 'string') {
     callback(new Error('Invalid session token'));
     return;
   }
-  pool.query(`
+  return await pool.query(`
     DELETE FROM tbl_sessions * WHERE token = $1`, [token]
   );
 };
 
 
 class PG_Storage extends Map {
-  get(key, callback) {
+  async get(key, callback) {
   const value = super.get(key);
   if (value) {
     callback(null, value);
     return;
   }
+
   get_db_session(key, (err, data) => {
     if (err) {
       callback(err);
       return;
     }
     console.log(`Session loaded: ${key}`);
-    const session = v8.deserialize(data);
+    const session = data.rows[0];
     super.set(key, session);
     callback(null, session);
   });
@@ -59,7 +60,7 @@ class PG_Storage extends Map {
 save(key) {
   const value = super.get(key);
   if (value) {
-    const data = v8.serialize(value);
+    const data = value.get('id');
     save_db_session(key, data, () => {
       console.log(`Session saved: ${key}`);
     });

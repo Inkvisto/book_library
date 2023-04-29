@@ -1,6 +1,6 @@
 {
-    "name": "PWA App",
-    "short_name": "App",
+    "name": "next-pwa",
+    "short_name": "next-pwa",
     "icons": [
         {
             "src": "/app_icons/maskable_icon.png",

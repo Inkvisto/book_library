@@ -14,6 +14,7 @@ interface ContentElements {
     registerPopup: JSX.Element;
     userLogin: (username: string) => JSX.Element;
     userRegister: (user: any) => JSX.Element;
+    serverError:JSX.Element;
 }
 
 
@@ -37,9 +38,15 @@ const Header = () => {
     React.useEffect(() => {
         const fetchUser = async () => {
             const username = await fetch('/api/user').then((res) => res.json());
-            console.log(username);
             
-            if (username) setContentHandler(['userLogin', username.name])
+            if(!username) {
+                setContentHandler('defaultLogin')
+            } else if(username.message){
+                setContentHandler('serverError')
+            } else {
+                setContentHandler(['userLogin', username.name])
+            }
+            
         }
         fetchUser()
     }, [])
@@ -111,9 +118,13 @@ const Header = () => {
             </div>
         </form>,
         'userLogin': (username: string | { error: string }) => <>{username ? <div>{typeof username === 'object' ? <div>{jsx.loginPopup}<span className={styles.loginError}>{username.error}</span></div> : <div className={styles.userLogin}>{username}<div onClick={handleUnsign} className={styles.unsign}>unsign</div></div>}</div> : <div>There is no such user try to  <div onClick={() => togglePopups('register')} >Register</div></div>}</>,
-        'userRegister': (user: any) => <div>{user ? <>{user}<div onClick={handleUnsign} className={styles.unsign}>unsign</div></> : <>There is already user with this email try another one <div onClick={() => togglePopups('register')} >Register</div></>}</div>
+        'userRegister': (user: any) => <div>{user ? <>{user}<div onClick={handleUnsign} className={styles.unsign}>unsign</div></> : <>There is already user with this email try another one <div onClick={() => togglePopups('register')} >Register</div></>}</div>,
+        'serverError':<>Server is currently offline</>
     }
 
+
+
+    
     return (
         <div>
             <nav className={styles.container}>
@@ -131,7 +142,7 @@ const Header = () => {
                     search input
                 </li>
                 <div className={styles.loginContainer}>
-                    {typeof contentHandler === 'string' ? jsx[`${contentHandler}` as keyof ContentElements] : jsx[`${contentHandler[0]}` as keyof ContentElements](contentHandler[1])}
+                   {typeof contentHandler === 'string' ? jsx[`${contentHandler}` as keyof ContentElements] : jsx[`${contentHandler[0]}` as keyof ContentElements] instanceof Function ? (contentHandler[1]): null} 
                 </div>
             </nav>
         </div>

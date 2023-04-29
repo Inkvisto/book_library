@@ -35,7 +35,7 @@ export default ({
         const valid = await validatePassword(password, hash);
         if (!valid) throw new Error('Incorrect login or password');
         await Session.start(client)
-        client.session.set('email', email)
+        client.session.set('id', user.id )
         client.session.save();
         return { username: user.name }
     },
@@ -46,8 +46,7 @@ export default ({
 
     async getUsername(client) {
         if (client.session) {
-            const email = Object.fromEntries(client.session).email;
-            const result = await pool.query('SELECT name FROM tbl_user WHERE email = $1', [email]);
+            const result = await pool.query('SELECT name FROM tbl_user WHERE id = $1', [client.session.id]);
             return result.rows[0];
         } else {
              throw new Error('No token for user');

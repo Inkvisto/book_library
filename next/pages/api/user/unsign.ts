@@ -14,7 +14,6 @@ export default async function handler(
 
     } catch (error) {
 
-        console.error(error);
         res.status(500).send({ message: 'Server error!' });
 
     }

@@ -40,6 +40,7 @@ const server = http2.createSecureServer({
 
   const client = await Client.getInstance(req, res);
   const stream = req.stream;
+  
   const buffers = [];
 
   stream.on('data', (chunk) => {
@@ -48,7 +49,6 @@ const server = http2.createSecureServer({
 
   stream.on('end', async () => {
     const body = Buffer.concat(buffers)
-
     if (!handler) {
       res.statusCode = 404;
       res.end('Not found 404');
@@ -62,7 +62,7 @@ const server = http2.createSecureServer({
     }
 
     if (['GET', 'POST'].indexOf(req.method) > -1) {
-      handler(client, body).then((data) => {
+      handler(client, jsonParse(body)).then((data) => {
         const type = typeof data;
         const serializer = types[type];
         const result = serializer(data);
@@ -72,7 +72,6 @@ const server = http2.createSecureServer({
       }, (err) => {
         res.writeHead(500, corsHeaders);
         res.end(err.message);
-        console.log(err);
       });
       return;
     }
@@ -83,9 +82,28 @@ const server = http2.createSecureServer({
   })
 });
 
+const logError = (type) => (err) => {
+  const msg = err?.stack || err?.message || 'exit';
+  console.error(`${type}: ${msg}`);
+};
 
 
+server.on('error', logError('err'))
+server.on('connect', logError('connect'))
+server.on('socketError', logError('socketError'))
+server.on('frameError',logError('frameError'))
+server.on('remoteSettings', logError('remote settings'))
+process.on('uncaughtException', logError('Uncaught exception'));
+process.on('warning', logError('Warning'));
+process.on('unhandledRejection', logError('Unhandled rejection'));
+
+
+server.on('checkContinue',(req,res) => {
+  console.log('continue')
+})
 server.listen(8000)
+
+
 
 
 

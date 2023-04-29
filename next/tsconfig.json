@@ -24,12 +24,15 @@
       }
     ]
   },
+  "ts-node": {
+    "esm": true
+},
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "app/email/auth,ts", "app/components/Fit/index.js"  ],
   "exclude": [
     "node_modules"
   ]
