@@ -52,10 +52,10 @@ export default function RootLayout({
     <title>Next Layout Example</title>
    </head>
    <body>
-    {/*
+    
     <header>
     <Header />
-          </header>*/}
+          </header>
     <div>{children}</div>
    </body>
   </html>

@@ -6,9 +6,7 @@ import Link from "next/link";
 import {Sphere} from './components/box.jsx'
 import { Canvas } from '@react-three/fiber';
 
-export default function Home({username,fitData }:{username:string | undefined,fitData:string | undefined}) {
-
-
+export default function Home({username,fitData }:{username:string | undefined,fitData:any}) {
 
   return (
     <div className={styles.container}>
@@ -64,7 +62,7 @@ export default function Home({username,fitData }:{username:string | undefined,fi
       <div>
      
       <div className={styles.donutChart}>
-        {fitData ?   <Fit fitData={fitData} /> : null}
+        {fitData.data === 'access denied' ?   <Fit fitData={fitData} /> : null}
         </div>
       </div>  
     </div>

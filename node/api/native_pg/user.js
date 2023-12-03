@@ -6,8 +6,11 @@ const tbl_name = 'tbl_user'
 
 export default ({
     async register(client, payload) {
-        const hash = await hashPassword(payload.password);
-        const { email, username } = payload;
+        const { email, username, password } = JSON.parse(payload);
+
+        console.log(payload, email, username, password);
+        const hash = await hashPassword(password);
+        
         try {
             await pool.query(`
             WITH create_user AS (

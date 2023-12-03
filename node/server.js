@@ -4,7 +4,8 @@ import fs from 'fs';
 
 import { routing } from "./routing.js";
 import Client from './auth/client.js'
-import { jsonParse, receiveBody } from "metautil";
+import pkg from 'metautil';
+const { jsonParse, receiveBody } = pkg;
 import { __dirname } from "./utils/path.js";
 
 
@@ -27,8 +28,8 @@ const corsHeaders = {
 
 
 const server = http2.createSecureServer({
-  key: fs.readFileSync('localhost-privkey.pem'),
-  cert: fs.readFileSync('localhost-cert.pem'),
+  key: fs.readFileSync('PRIVATEKEY.pem'),
+  cert: fs.readFileSync('MYCSR.pem'),
 }, async (req, res) => {
 
   const { method, url, headers } = req;

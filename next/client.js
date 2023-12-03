@@ -4,7 +4,7 @@ import { cache } from 'react'
 
 
 const session = http2.connect('https://localhost:8000', {
-  ca: fs.readFileSync('localhost-cert.pem'),
+  ca: fs.readFileSync('MYCSR.pem'),
 })
 
 session.on('error', (err) => { console.error(err) })
